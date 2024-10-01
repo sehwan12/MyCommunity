@@ -1,2 +1,0 @@
-# MyCommunity
-simple community project 
