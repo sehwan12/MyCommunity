@@ -3,21 +3,20 @@ package com.example.myCommunity.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "document")
+@Table(name = "post")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Document {
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "doc_id")
-    private int docId;
+    @Column(name = "post_id")
+    private int postId;
 
     // User와의 다대일 관계 (N:1)
     @ManyToOne
@@ -29,27 +28,22 @@ public class Document {
     @JoinColumn(name = "category_id", nullable = false)
     private Board board;
 
-    @Column(name = "doc_generated", nullable = false)
-    private LocalDateTime docGenerated;
-
-    @Column(name = "doc_modified", nullable = false)
-    private LocalDateTime docModified;
+    @Column(name = "post_timestamp", nullable = false)
+    @Embedded
+    private TimeStamp post_timestamp;
 
     @Column(name = "title", length = 50, nullable = false)
     private String title;
 
-    @Column(name = "liked", nullable = false)
-    private int liked;
-
-    @Column(name = "doc_text", length = 1000, nullable = false)
-    private String docText;
+    @Column(name = "post_text", length = 1000, nullable = false)
+    private String postText;
 
     // 첨부파일 목록 (1:N)
-    @OneToMany(mappedBy = "document")
+    @OneToMany(mappedBy = "post")
     private List<Attachment> attachments;
 
     // 게시글의 댓글 목록 (1:N)
-    @OneToMany(mappedBy = "document")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments;
 }
 

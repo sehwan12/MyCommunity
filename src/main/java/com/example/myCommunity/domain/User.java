@@ -1,5 +1,6 @@
 package com.example.myCommunity.domain;
 
+import com.example.myCommunity.domain.like.Heart;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,11 +34,15 @@ public class User {
 
     // User가 작성한 게시글 목록 (1:N)
     @OneToMany(mappedBy = "user")
-    private List<Document> documents;
+    private List<Post> posts;
 
     // User가 작성한 댓글 목록 (1:N)
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
+
+    //User가 준 좋아요 목록
+    @OneToMany(mappedBy = "user")
+    private List<Heart> hearts;
 
     public enum UserGrade {
         NORMAL, ADMIN

@@ -3,8 +3,6 @@ package com.example.myCommunity.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "attachment")
 @Getter
@@ -20,8 +18,8 @@ public class Attachment {
 
     // Document와의 다대일 관계 (N:1)
     @ManyToOne
-    @JoinColumn(name = "doc_id", nullable = false)
-    private Document document;
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Column(name = "attach_url", length = 255, nullable = false)
     private String attachUrl;
@@ -29,11 +27,8 @@ public class Attachment {
     @Column(name = "attach_size")
     private long attachSize;
 
-    @Column(name = "attach_generatedTime", nullable = false)
-    private LocalDateTime attachGeneratedTime;
-
-    @Column(name = "attach_changed")
-    private LocalDateTime attachChanged;
+    @Embedded
+    private TimeStamp timestamp;
 
     @Column(name = "attach_file_type", length = 100, nullable = false)
     private String attachFileType;

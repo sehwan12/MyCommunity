@@ -23,6 +23,6 @@ public class Board {
 
     // 카테고리의 게시글 목록 (1:N)
     @OneToMany(mappedBy = "board")
-    private List<Document> documents;
+    private List<Post> posts;
 }
 

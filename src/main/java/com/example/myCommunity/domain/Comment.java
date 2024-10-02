@@ -3,7 +3,6 @@ package com.example.myCommunity.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -26,14 +25,11 @@ public class Comment {
 
     // Document와의 다대일 관계 (N:1)
     @ManyToOne
-    @JoinColumn(name = "doc_id", nullable = false)
-    private Document document;
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-    @Column(name = "comment_generated", nullable = false)
-    private LocalDateTime commentGenerated;
-
-    @Column(name = "comment_modified", nullable = false)
-    private LocalDateTime commentModified;
+    @Embedded
+    private TimeStamp timestamp;
 
     @Column(name = "comment_text", length = 500, nullable = false)
     private String commentText;
