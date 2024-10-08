@@ -20,7 +20,7 @@ public class Post {
 
     // User와의 다대일 관계 (N:1)
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     // Board와의 다대일 관계 (N:1)
@@ -43,7 +43,7 @@ public class Post {
     private List<Attachment> attachments;
 
     // 게시글의 댓글 목록 (1:N)
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 }
 

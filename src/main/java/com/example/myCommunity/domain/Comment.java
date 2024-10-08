@@ -20,7 +20,7 @@ public class Comment {
 
     // User와의 다대일 관계 (N:1)
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     // Document와의 다대일 관계 (N:1)
