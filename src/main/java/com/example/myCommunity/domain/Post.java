@@ -1,5 +1,7 @@
 package com.example.myCommunity.domain;
 
+import com.example.myCommunity.domain.like.CommentHeart;
+import com.example.myCommunity.domain.like.PostHeart;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,11 +41,14 @@ public class Post {
     private String postText;
 
     // 첨부파일 목록 (1:N)
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
     private List<Attachment> attachments;
 
     // 게시글의 댓글 목록 (1:N)
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post",  fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostHeart> likes; // 댓글 좋아요 목록
 }
 

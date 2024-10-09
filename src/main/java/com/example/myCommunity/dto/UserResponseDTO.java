@@ -14,6 +14,6 @@ public class UserResponseDTO {
     private String userEmail;
     private String userPhone;
     private String userGrade;
-    private LocalDate birth;
+    private LocalDate birthdate;
     // 필요한 필드 추가
 }

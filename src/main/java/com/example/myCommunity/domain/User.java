@@ -39,7 +39,7 @@ public class User {
     private String userEmail;
 
     @Column(name="user_birth")
-    private LocalDate birth;
+    private LocalDate birthdate;
 
     // User가 작성한 게시글 목록 (1:N)
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

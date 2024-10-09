@@ -1,5 +1,6 @@
 package com.example.myCommunity.domain;
 
+import com.example.myCommunity.domain.like.CommentHeart;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,6 +41,9 @@ public class Comment {
     private Comment parent;
 
     // 자식 댓글 목록 (1:N)
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private List<Comment> childComments;
+
+    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<CommentHeart> likes; // 댓글 좋아요 목록
 }

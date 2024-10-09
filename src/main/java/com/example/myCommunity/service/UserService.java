@@ -37,7 +37,7 @@ public class UserService {
         responseDTO.setUserId(user.getUserId());
         responseDTO.setUserEmail(user.getUserEmail());
         responseDTO.setUserPhone(user.getUserPhone());
-        responseDTO.setBirth(user.getBirth());
+        responseDTO.setBirthdate(user.getBirthdate());
         responseDTO.setUserGrade(user.getUserGrade().name());
         return responseDTO;
     }
@@ -54,7 +54,7 @@ public class UserService {
         user.setUserEmail(registrationDTO.getUserEmail());
         user.setUserPassword(registrationDTO.getUserPassword()); // 비밀번호 암호화
         user.setUserPhone(registrationDTO.getUserPhone());
-        user.setBirth(registrationDTO.getBirthdate());
+        user.setBirthdate(registrationDTO.getBirthdate());
         user.setUserGrade(registrationDTO.getUserGrade());
 
         // 사용자 저장
@@ -94,7 +94,7 @@ public class UserService {
         user.setUserEmail(registrationDTO.getUserEmail());
         user.setUserPassword(registrationDTO.getUserPassword());
         user.setUserPhone(registrationDTO.getUserPhone());
-        user.setBirth(registrationDTO.getBirthdate());
+        user.setBirthdate(registrationDTO.getBirthdate());
         user.setUserGrade(registrationDTO.getUserGrade());
 
         User updatedUser = userRepository.save(user);
