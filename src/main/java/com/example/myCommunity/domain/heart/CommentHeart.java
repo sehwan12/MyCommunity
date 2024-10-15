@@ -1,4 +1,4 @@
-package com.example.myCommunity.domain.like;
+package com.example.myCommunity.domain.heart;
 
 import com.example.myCommunity.domain.Comment;
 import jakarta.persistence.*;

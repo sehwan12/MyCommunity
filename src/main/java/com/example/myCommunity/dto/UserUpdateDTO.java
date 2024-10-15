@@ -4,15 +4,13 @@ import com.example.myCommunity.domain.UserGrade;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Data;
 
 import java.time.LocalDate;
-//dtoqnsfl
+
 @Data
-public class UserRegistrationDTO {
-    @NotBlank(message = "이메일은 필수 입력 사항입니다.")
-    @Email(message = "유효한 이메일 주소를 입력하세요")
-    private String userEmail;
+public class UserUpdateDTO {
+    private Long userId;
 
     @NotBlank(message = "비밀번호는 필수 입력 사항입니다.")
     @Size(min=8, max=100,message = "비밀번호는 최소 8자 이상이어야 합니다.")
@@ -25,11 +23,5 @@ public class UserRegistrationDTO {
     @NotBlank(message= "생년월일은 필수 입력 사항입니다")
     private LocalDate birthdate;
 
-    @NotBlank
-    private UserGrade userGrade;
-
-    @NotBlank(message = "닉네임은 필수 입력 사항입니다.")
-    @Size(min =2,max=10, message = "닉네임은 2자 이상 10자 이하여야 합니다.")
     private String username;
-
 }

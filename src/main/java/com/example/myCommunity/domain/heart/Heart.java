@@ -1,4 +1,4 @@
-package com.example.myCommunity.domain.like;
+package com.example.myCommunity.domain.heart;
 
 import com.example.myCommunity.domain.User;
 import jakarta.persistence.*;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "heart")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")
 
@@ -20,10 +19,10 @@ public class Heart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")
-    private int likeId;
+    private Long likeId;
 
     // user와의 다대일 관계 (N:1)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

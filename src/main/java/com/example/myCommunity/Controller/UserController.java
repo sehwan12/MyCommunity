@@ -1,8 +1,10 @@
 package com.example.myCommunity.Controller;
 
+import com.example.myCommunity.domain.User;
 import com.example.myCommunity.dto.UserLoginDTO;
 import com.example.myCommunity.dto.UserRegistrationDTO;
 import com.example.myCommunity.dto.UserResponseDTO;
+import com.example.myCommunity.dto.UserUpdateDTO;
 import com.example.myCommunity.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -38,7 +40,7 @@ public class UserController {
         }
 
         try {
-            UserResponseDTO savedUser = userService.registerUser(registrationDTO);
+            User savedUser = userService.registerUser(registrationDTO);
             model.addAttribute("successMessage", savedUser.getUserId()+"님, 회원가입이 성공적으로 완료되었습니다. 로그인해주세요.");
             return "redirect:/users/login"; // 회원가입 성공 시 로그인 페이지로 리다이렉트
         } catch (IllegalArgumentException e) {
@@ -49,7 +51,7 @@ public class UserController {
 
     //마이페이지 표시
     @GetMapping("/{userId}/mypage")
-    public String showMyPage(@PathVariable Integer userId, Model model, HttpSession session) {
+    public String showMyPage(@PathVariable Long userId, Model model, HttpSession session) {
         // 세션 또는 인증된 사용자 정보로부터 userId를 가져오는 대신 경로 변수로 받습니다.
 
         // 세션의 사용자와 요청된 userId가 일치하는지 확인 (보안상 필요)
@@ -58,15 +60,15 @@ public class UserController {
             return "redirect:/users/login"; // 또는 에러 페이지로 리다이렉트
         }
 
-        UserResponseDTO user = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
         model.addAttribute("user", user);
         return "users/mypage"; // mypage.html 뷰를 반환
     }
 
     //마이페이지 수정
     @PostMapping("/{userId}/mypage")
-    public String updateMyPage(@PathVariable Integer userId,
-                               @Valid @ModelAttribute UserRegistrationDTO registrationDTO,
+    public String updateMyPage(@PathVariable Long userId,
+                               @Valid @ModelAttribute UserUpdateDTO updateDTO,
                                BindingResult bindingResult,
                                Model model,
                                HttpSession session) {
@@ -80,7 +82,7 @@ public class UserController {
             return "redirect:/users/login"; // 또는 에러 페이지로 리다이렉트
         }
 
-        UserResponseDTO updatedUser = userService.updateUser(userId, registrationDTO);
+        User updatedUser = userService.updateUser(updateDTO);
         model.addAttribute("user", updatedUser);
         model.addAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
         return "users/mypage";
@@ -105,7 +107,7 @@ public class UserController {
         }
 
         try {
-            UserResponseDTO user = userService.login(loginDTO);
+            User user = userService.login(loginDTO);
             // 세션에 사용자 정보 저장
             session.setAttribute("userId", user.getUserId());
             return "redirect:/users/" + user.getUserId() + "/mypage"; // 로그인 성공 시 마이페이지로 리다이렉트

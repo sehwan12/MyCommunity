@@ -1,19 +1,17 @@
 package com.example.myCommunity.dto;
 
+import com.example.myCommunity.domain.UserGrade;
 import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class UserResponseDTO {
 
-    private int userId;
+    private Long userId;
     private String userEmail;
     private String userPhone;
-    private String userGrade;
+    private UserGrade userGrade;
     private LocalDate birthdate;
     // 필요한 필드 추가
 }

@@ -1,57 +1,73 @@
 package com.example.myCommunity.domain;
 
-import com.example.myCommunity.domain.like.Heart;
+import com.example.myCommunity.dto.UserUpdateDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
-@Table(name = "user")
 @Getter
-@Setter
+////setter는 협업할 때 문제가 있을 수 있음
+//@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
 
-    @Column(name="user_password", length= 255, nullable = false)
+    private String username;
+
     @Size(min=8, max=20)
     private String userPassword;
 
-    @Column(name = "user_grade", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserGrade userGrade;
 
-    @Column(name = "user_phone", length = 15, nullable = false)
     @Size(min=10, max=15)
     private String userPhone;
 
-    @Column(name = "user_email", length = 255, nullable = false, unique = true)
+    @NotEmpty
     @Email
     private String userEmail;
 
-    @Column(name="user_birth")
     private LocalDate birthdate;
 
-    // User가 작성한 게시글 목록 (1:N)
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Post> posts;
+    public void updateMember(UserUpdateDTO userUpdateDTO){
+        this.userPassword = userUpdateDTO.getUserPassword();
+        this.userPhone = userUpdateDTO.getUserPhone();
+        this.birthdate = userUpdateDTO.getBirthdate();
+        this.username = userUpdateDTO.getUsername();
+    }
 
-    // User가 작성한 댓글 목록 (1:N)
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Comment> comments;
+    @Builder
+    public User(String username, String userPassword, UserGrade userGrade, String userPhone, LocalDate birthdate, String userEmail) {
+        this.username = username;
+        this.userPassword = userPassword;
+        this.userGrade = userGrade;
+        this.userPhone = userPhone;
+        this.birthdate = birthdate;
+        this.userEmail = userEmail;
+    }
 
-    //User가 준 좋아요 목록
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Heart> hearts;
+//    // User가 작성한 게시글 목록 (1:N)
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    private List<Post> posts;
+//
+//    // User가 작성한 댓글 목록 (1:N)
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+//    private List<Comment> comments;
+//
+//    //User가 준 좋아요 목록
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private List<Heart> hearts;
 
 
 }
