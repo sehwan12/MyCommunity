@@ -11,8 +11,6 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
-////setter는 협업할 때 문제가 있을 수 있음
-//@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")

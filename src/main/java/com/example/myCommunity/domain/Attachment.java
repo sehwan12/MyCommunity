@@ -2,6 +2,10 @@ package com.example.myCommunity.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -24,10 +28,20 @@ public class Attachment {
 
     private long attachSize;
 
-    @Embedded
-    private TimeStamp timestamp;
+    @Column(name = "created_date")
+    @CreatedDate
+    private LocalDateTime createdDate;
 
-    //private String attachFileType;
+    @Column(name = "modified_date")
+    @LastModifiedDate
+    private LocalDateTime modifiedDate;
 
+//    @Embedded
+//    private TimeStamp timestamp;
+
+    public void updateAttachment(String attachUrl, long attachSize) {
+        this.attachUrl = attachUrl;
+        this.attachSize = attachSize;
+    }
 }
 

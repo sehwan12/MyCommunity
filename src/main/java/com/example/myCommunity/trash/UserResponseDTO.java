@@ -1,4 +1,4 @@
-package com.example.myCommunity.dto;
+package com.example.myCommunity.trash;
 
 import com.example.myCommunity.domain.UserGrade;
 import lombok.*;
