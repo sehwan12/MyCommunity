@@ -1,4 +1,4 @@
-package com.example.myCommunity.dto;
+package com.example.myCommunity.dto.userDto;
 
 import com.example.myCommunity.domain.UserGrade;
 import jakarta.validation.constraints.Email;

@@ -2,9 +2,9 @@ package com.example.myCommunity.service;
 
 import com.example.myCommunity.domain.User;
 import com.example.myCommunity.domain.UserGrade;
-import com.example.myCommunity.dto.UserLoginDTO;
-import com.example.myCommunity.dto.UserRegistrationDTO;
-import com.example.myCommunity.dto.UserUpdateDTO;
+import com.example.myCommunity.dto.userDto.UserLoginDTO;
+import com.example.myCommunity.dto.userDto.UserRegistrationDTO;
+import com.example.myCommunity.dto.userDto.UserUpdateDTO;
 import com.example.myCommunity.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.example.myCommunity.domain;
+package com.example.myCommunity.trash;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;

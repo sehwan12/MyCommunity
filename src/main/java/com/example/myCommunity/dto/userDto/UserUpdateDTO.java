@@ -1,7 +1,5 @@
-package com.example.myCommunity.dto;
+package com.example.myCommunity.dto.userDto;
 
-import com.example.myCommunity.domain.UserGrade;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;

@@ -1,9 +1,9 @@
 package com.example.myCommunity.Controller;
 
 import com.example.myCommunity.domain.User;
-import com.example.myCommunity.dto.UserLoginDTO;
-import com.example.myCommunity.dto.UserRegistrationDTO;
-import com.example.myCommunity.dto.UserUpdateDTO;
+import com.example.myCommunity.dto.userDto.UserLoginDTO;
+import com.example.myCommunity.dto.userDto.UserRegistrationDTO;
+import com.example.myCommunity.dto.userDto.UserUpdateDTO;
 import com.example.myCommunity.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

@@ -1,6 +1,6 @@
 package com.example.myCommunity.domain;
 
-import com.example.myCommunity.dto.UserUpdateDTO;
+import com.example.myCommunity.dto.userDto.UserUpdateDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

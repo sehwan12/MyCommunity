@@ -4,14 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Attachment {
 
     @Id
@@ -36,12 +37,17 @@ public class Attachment {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-//    @Embedded
-//    private TimeStamp timestamp;
-
     public void updateAttachment(String attachUrl, long attachSize) {
         this.attachUrl = attachUrl;
         this.attachSize = attachSize;
     }
+
+    @Builder
+    public Attachment(Post post, String attachUrl, long attachSize) {
+        this.post = post;
+        this.attachUrl = attachUrl;
+        this.attachSize = attachSize;
+    }
+
 }
 

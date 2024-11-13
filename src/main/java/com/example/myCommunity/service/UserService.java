@@ -2,9 +2,9 @@ package com.example.myCommunity.service;
 
 import com.example.myCommunity.Exception.UserNotFoundException;
 import com.example.myCommunity.domain.User;
-import com.example.myCommunity.dto.UserLoginDTO;
-import com.example.myCommunity.dto.UserRegistrationDTO;
-import com.example.myCommunity.dto.UserUpdateDTO;
+import com.example.myCommunity.dto.userDto.UserLoginDTO;
+import com.example.myCommunity.dto.userDto.UserRegistrationDTO;
+import com.example.myCommunity.dto.userDto.UserUpdateDTO;
 import com.example.myCommunity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +46,6 @@ public class UserService {
                 .build();
 
         // 사용자 저장
-
-        // 응답 DTO 생성
-
         return userRepository.save(user);
     }
 
