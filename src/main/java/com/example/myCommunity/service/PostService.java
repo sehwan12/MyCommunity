@@ -56,7 +56,7 @@ public class PostService {
     @Transactional
     public Post updatePost(PostEditDTO edit){
         Post post=getCurrentPost(edit.getPostId());
-        post.updatePost(edit.getTitle(), edit.getPostText());
+        post.updatePost(edit);
         validateUser(post, edit.getUserId());
         return postRepository.save(post);
     }

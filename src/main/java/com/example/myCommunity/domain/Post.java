@@ -1,5 +1,6 @@
 package com.example.myCommunity.domain;
 
+import com.example.myCommunity.dto.postDTO.PostEditDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -45,9 +46,9 @@ public class Post {
 
     private String postText;
 
-    public void updatePost(String title, String postText) {
-        this.title = title;
-        this.postText = postText;
+    public void updatePost(PostEditDTO edit) {
+        this.title = edit.getTitle();
+        this.postText = edit.getPostText();
     }
 //    // 첨부파일 목록 (1:N)
 //    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)

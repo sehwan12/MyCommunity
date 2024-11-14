@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class CommentService {
-    @Autowired
+    //@Autowired
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -103,6 +103,6 @@ public class CommentService {
         Post post=postRepository.findById(postId).orElseThrow(
                 ()->new PostNotFoundException("게시글을 찾을 수 없습니다.")
         );
-        return commentRepository.findByPostAndParentCommentIsNull(post);
+        return commentRepository.findByPostAndParentIsNull(post);
     }
 }

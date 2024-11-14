@@ -3,8 +3,10 @@ package com.example.myCommunity.dto.postDTO;
 import com.example.myCommunity.domain.Board;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class PostRegistrationDTO {
     @NotBlank
@@ -15,5 +17,6 @@ public class PostRegistrationDTO {
 
     private Long userId;
     private Board board;
+
 
 }

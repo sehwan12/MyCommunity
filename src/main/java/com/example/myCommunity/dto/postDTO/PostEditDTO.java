@@ -2,8 +2,10 @@ package com.example.myCommunity.dto.postDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class PostEditDTO {
     @NotBlank(message = "사용자 ID는 필수입니다.")
