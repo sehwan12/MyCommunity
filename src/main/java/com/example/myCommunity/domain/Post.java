@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -45,6 +45,10 @@ public class Post {
 
     private String postText;
 
+    public void updatePost(String title, String postText) {
+        this.title = title;
+        this.postText = postText;
+    }
 //    // 첨부파일 목록 (1:N)
 //    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
 //    private List<Attachment> attachments;

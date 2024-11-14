@@ -7,7 +7,7 @@ import com.example.myCommunity.domain.Attachment;
 import com.example.myCommunity.domain.Post;
 import com.example.myCommunity.repository.AttachmentRepository;
 import com.example.myCommunity.repository.PostRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,11 +43,15 @@ public class AttachmentService{
      * 첨부파일 추가 (단일 파일)
      */
     @Transactional
-    public Attachment addAttachmentToPost(Long postId, MultipartFile file) {
+    public Attachment addAttachmentToPost(Long postId, Long currentUserId, MultipartFile file) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
 
         //User currentUser = getCurrentUser();
+        // 게시글 작성자만 삭제할 수 있도록 검증
+        if (!post.getUser().getUserId().equals(currentUserId)) {
+            throw new UnauthorizedException("첨부파일을 추가할 권한이 없습니다.");
+        }
 
         // 파일 유효성 검증
         validateFile(file);

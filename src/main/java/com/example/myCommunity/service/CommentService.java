@@ -12,7 +12,7 @@ import com.example.myCommunity.dto.commentDto.CommentRequestDTO;
 import com.example.myCommunity.repository.CommentRepository;
 import com.example.myCommunity.repository.PostRepository;
 import com.example.myCommunity.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,7 +98,7 @@ public class CommentService {
     }
 
     //특정 게시글의 모든 최상위 댓글 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Comment> getCommentsByPostId(Long postId) {
         Post post=postRepository.findById(postId).orElseThrow(
                 ()->new PostNotFoundException("게시글을 찾을 수 없습니다.")

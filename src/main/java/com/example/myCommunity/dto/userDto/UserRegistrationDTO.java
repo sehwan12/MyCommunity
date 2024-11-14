@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
-//dtoqnsfl
+
 @Data
 public class UserRegistrationDTO {
     @NotBlank(message = "이메일은 필수 입력 사항입니다.")
