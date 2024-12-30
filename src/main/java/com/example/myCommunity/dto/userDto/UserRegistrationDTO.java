@@ -1,6 +1,7 @@
 package com.example.myCommunity.dto.userDto;
 
 import com.example.myCommunity.domain.UserGrade;
+import com.example.myCommunity.domain.Users;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -32,4 +33,15 @@ public class UserRegistrationDTO {
     @Size(min =2,max=10, message = "닉네임은 2자 이상 10자 이하여야 합니다.")
     private String username;
 
+    //dto->entity 변환
+    public Users toEntity(){
+        return Users.builder()
+                .userEmail(userEmail)
+                .userPassword(userPassword)
+                .userPhone(userPhone)
+                .birthdate(birthdate)
+                .userGrade(userGrade)
+                .username(username)
+                .build();
+    }
 }

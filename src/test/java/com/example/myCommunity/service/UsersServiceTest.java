@@ -1,6 +1,6 @@
 package com.example.myCommunity.service;
 
-import com.example.myCommunity.domain.User;
+import com.example.myCommunity.domain.Users;
 import com.example.myCommunity.domain.UserGrade;
 import com.example.myCommunity.dto.userDto.UserLoginDTO;
 import com.example.myCommunity.dto.userDto.UserRegistrationDTO;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-class UserServiceTest {
+class UsersServiceTest {
     @Autowired
     UserRepository userRepo;
     @Autowired
@@ -37,6 +37,8 @@ class UserServiceTest {
     private UserLoginDTO loginDTO;
     private UserLoginDTO loginFailDTO;
     private UserLoginDTO loginFailDTO2;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     public void setUp() {
@@ -95,7 +97,8 @@ class UserServiceTest {
         // given
 
         // when
-        User user = userService.registerUser(registrationDTO);
+        Long userid = userService.registerUser(registrationDTO);
+        Users user=userRepository.getById(userid);
 
         // then
         assertNotNull(user);
@@ -125,18 +128,19 @@ class UserServiceTest {
     @Test
     void 회원_삭제() {
         //given
-        User user= userService.registerUser(registrationDTO);
+        Long userid= userService.registerUser(registrationDTO);
         //when
-        userService.deleteUser(user.getUserId());
+        userService.deleteUser(userid);
         //then
-        assertFalse(userRepo.findById(user.getUserId()).isPresent(), "사용자가 삭제되어야 합니다.");
+        assertFalse(userRepo.findById(userid).isPresent(), "사용자가 삭제되어야 합니다.");
     }
 
     @Test
     void 회원정보_수정() {
         //given
-        User user= userService.registerUser(registrationDTO);
-        updateDTO.setUserId(user.getUserId());
+        Long userid= userService.registerUser(registrationDTO);
+        Users user=userService.getUserById(userid);
+        updateDTO.setUserId(userid);
         //when
         userService.updateUser(updateDTO);
         //then
@@ -149,7 +153,8 @@ class UserServiceTest {
     @Test
     void 로그인_성공() {
         //given
-        User user= userService.registerUser(registrationDTO);
+        Long userid= userService.registerUser(registrationDTO);
+        Users user=userService.getUserById(userid);
         //when
         userService.login(loginDTO);
         //then
@@ -161,7 +166,7 @@ class UserServiceTest {
     @Test
     void 로그인_이메일_실패() {
         //given
-        User user= userService.registerUser(registrationDTO);
+        Long userid= userService.registerUser(registrationDTO);
 
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -174,7 +179,7 @@ class UserServiceTest {
     @Test
     void 로그인_패스워드_실패() {
         //given
-        User user= userService.registerUser(registrationDTO);
+        Long userid= userService.registerUser(registrationDTO);
 
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -187,8 +192,9 @@ class UserServiceTest {
     @Test
 
     void 단건_조회(){
-        User user= userService.registerUser(registrationDTO);
-        User user2=userService.getUserById(user.getUserId());
+        Long userid= userService.registerUser(registrationDTO);
+        Users user=userService.getUserById(userid);
+        Users user2=userService.getUserById(user.getUserId());
         assertEquals(user, user2);
     }
 
@@ -196,9 +202,10 @@ class UserServiceTest {
     @Test
     void 생일_전화번호로_조회() {
         //given
-        User user= userService.registerUser(registrationDTO);
+        Long userid= userService.registerUser(registrationDTO);
+        Users user=userService.getUserById(userid);
         //when
-        User user2=userService.findUserByBirthdateAndPhone(user.getBirthdate(),user.getUserPhone());
+        Users user2=userService.findUserByBirthdateAndPhone(user.getBirthdate(),user.getUserPhone());
         //then
         assertEquals(user, user2);
 

@@ -1,13 +1,14 @@
 package com.example.myCommunity.service;
 
 import com.example.myCommunity.Exception.UserNotFoundException;
-import com.example.myCommunity.domain.User;
+import com.example.myCommunity.domain.Users;
 import com.example.myCommunity.dto.userDto.UserLoginDTO;
 import com.example.myCommunity.dto.userDto.UserRegistrationDTO;
 import com.example.myCommunity.dto.userDto.UserUpdateDTO;
 import com.example.myCommunity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -20,7 +21,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Service
 public class UserService {
-    @Autowired
     private final UserRepository userRepository;
 
     //중복 회원 검사(이메일로)
@@ -29,55 +29,43 @@ public class UserService {
     }
 
     @Transactional
-    public User registerUser(UserRegistrationDTO registrationDTO) {
+    public Long registerUser(UserRegistrationDTO registrationDTO) {
         // 중복 이메일 확인
         if (isEmailDuplicated(registrationDTO.getUserEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-
-        User user= User.builder()
-                .userEmail(registrationDTO.getUserEmail())
-                .userPassword(registrationDTO.getUserPassword())
-                .userPhone(registrationDTO.getUserPhone())
-                .birthdate(registrationDTO.getBirthdate())
-                .userGrade(registrationDTO.getUserGrade())
-                .username(registrationDTO.getUsername())
-                .build();
+        Users user= registrationDTO.toEntity();
 
         // 사용자 저장
-        return userRepository.save(user);
+        userRepository.save(user);
+        return user.getUserId();
     }
 
     //회원 삭제
     @Transactional
     public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId)
+        Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         userRepository.delete(user);
     }
 
-    //단건 조회(ID로)
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-    }
 
     //회원 정보 수정
+    //update는 save필요없이 updateUser함수만 호출해주면 됨.
     @Transactional
-    public User updateUser(UserUpdateDTO updateDTO) {
-        User user = userRepository.findById(updateDTO.getUserId())
+    public void updateUser(UserUpdateDTO updateDTO) {
+        Users user = userRepository.findById(updateDTO.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        user.updateMember(updateDTO);
-
-        return userRepository.save(user);
+        user.updateUser(updateDTO);
     }
 
-    public User login(UserLoginDTO loginDTO) {
+    //로그인
+    public Long login(UserLoginDTO loginDTO) {
         // 이메일로 사용자 조회
-        User user = userRepository.findByUserEmail(loginDTO.getUserEmail())
+        Users user = userRepository.findByUserEmail(loginDTO.getUserEmail())
                 .orElseThrow(() -> new IllegalArgumentException("이메일이 올바르지 않습니다."));
 
         // 비밀번호 검증
@@ -85,14 +73,24 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 올바르지 않습니다.");
         }
 
-        return user;
+        return user.getUserId();
+    }
+
+    //단건 조회(ID로)
+    public Users getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     // 생년월일과 휴대폰 번호로 회원 조회
-    public User findUserByBirthdateAndPhone(LocalDate birthdate, String userPhone) {
+    public Users findUserByBirthdateAndPhone(LocalDate birthdate, String userPhone) {
         return userRepository.findByBirthdateAndUserPhone(birthdate, userPhone)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
     }
 
+    //모든 사용자 조회(페이징 적용)
+    public Page<Users> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
 }
 

@@ -6,7 +6,6 @@ import lombok.*;
 //게시판 클래스
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -19,8 +18,5 @@ public class Board {
 
     private String boardName;
 
-//    // 카테고리의 게시글 목록 (1:N)
-//    @OneToMany(mappedBy = "board")
-//    private List<Post> posts;
 }
 

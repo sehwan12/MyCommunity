@@ -18,7 +18,7 @@ public class Attachment {
     @Id
     @GeneratedValue
     @Column(name = "attach_id")
-    private Long attachId;
+    private Long attachmentId;
 
     // Document와의 다대일 관계 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,10 +37,10 @@ public class Attachment {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-    public void updateAttachment(String attachUrl, long attachSize) {
-        this.attachUrl = attachUrl;
-        this.attachSize = attachSize;
-    }
+//    public void updateAttachment(String attachUrl, long attachSize) {
+//        this.attachUrl = attachUrl;
+//        this.attachSize = attachSize;
+//    }
 
     @Builder
     public Attachment(Post post, String attachUrl, long attachSize) {

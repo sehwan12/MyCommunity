@@ -1,6 +1,6 @@
 package com.example.myCommunity.domain.heart;
 
-import com.example.myCommunity.domain.User;
+import com.example.myCommunity.domain.Users;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -14,14 +14,14 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Heart {
+public abstract class Heart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id")
-    private Long likeId;
+    @Column(name = "heart_id")
+    private Long heartId;
 
     // user와의 다대일 관계 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Users user;
 }

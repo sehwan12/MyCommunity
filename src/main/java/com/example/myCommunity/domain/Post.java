@@ -26,18 +26,18 @@ public class Post {
     // User와의 다대일 관계 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
     // Board와의 다대일 관계 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Column(name = "created_date")
+    @Column
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @Column(name = "modified_date")
+    @Column
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
@@ -47,18 +47,24 @@ public class Post {
     private String postText;
 
     public void updatePost(PostEditDTO edit) {
+        updateTitle(edit);
+        updateText(edit);
+    }
+
+    private void updateTitle(PostEditDTO edit) {
         this.title = edit.getTitle();
+    }
+
+    private void updateText(PostEditDTO edit) {
         this.postText = edit.getPostText();
     }
-//    // 첨부파일 목록 (1:N)
-//    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
-//    private List<Attachment> attachments;
-//
-//    // 게시글의 댓글 목록 (1:N)
-//    @OneToMany(mappedBy = "post",  fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Comment> comments;
-//
-//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<PostHeart> likes; // 댓글 좋아요 목록
+
+    public boolean isAuthor(Long userId) {
+        if(this.user == null || this.user.getUserId() == null || userId == null){
+            return false;
+        }
+        return this.user.getUserId().equals(userId);
+    }
+
 }
 

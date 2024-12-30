@@ -1,15 +1,15 @@
 package com.example.myCommunity.dto.postDTO;
 
+import com.example.myCommunity.domain.Post;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
-@Builder
+
 @Data
+@Builder
 public class PostEditDTO {
-    @NotBlank(message = "사용자 ID는 필수입니다.")
-    private Long userId;
 
     @NotBlank(message = "게시물 ID는 필수입니다.")
     private Long postId;
@@ -20,4 +20,12 @@ public class PostEditDTO {
 
     @NotBlank(message = "내용은 필수입니다.")
     private String postText;
+
+    public static PostEditDTO fromEntity(Post post) {
+        return PostEditDTO.builder().
+                postId(post.getPostId()).
+                title(post.getTitle()).
+                postText(post.getPostText()).
+                build();
+    }
 }

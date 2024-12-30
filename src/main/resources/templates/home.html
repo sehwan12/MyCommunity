@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>My Community - Home</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!-- Bootstrap CSS -->
+    <link th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- 네비게이션 바 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" th:href="@{/home}">My Community</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- 좌측 메뉴 (필요 시 추가) -->
+        <ul class="navbar-nav mr-auto">
+            <!-- 예: 홈, 게시판 등 -->
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/home}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <!-- 추가 메뉴 항목 -->
+        </ul>
+        <!-- 우측 메뉴 -->
+        <ul class="navbar-nav">
+            <!-- 비인증 사용자에게만 표시 -->
+            <li class="nav-item" th:if="${sessionUserId == null}">
+                <a class="nav-link" th:href="@{/users/register}">회원가입</a>
+            </li>
+            <li class="nav-item" th:if="${sessionUserId == null}">
+                <a class="nav-link" th:href="@{/users/login}">로그인</a>
+            </li>
+            <!-- 인증된 사용자에게만 표시 -->
+            <li class="nav-item" th:if="${sessionUserId != null}">
+                <a class="nav-link" th:href="@{/users/mypage}">마이페이지</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- 메인 컨테이너 -->
+<div class="container mt-4">
+    <!-- 플래시 메시지 -->
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <p th:text="${successMessage}"></p>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <!-- 게시판 탭 바 -->
+    <ul class="nav nav-tabs" id="boardTab" role="tablist">
+        <li class="nav-item" th:each="board, iterStat : ${boards}">
+            <!-- 첫 번째 탭을 active로 설정 -->
+            <a class="nav-link"
+               th:classappend="${iterStat.index == 0} ? 'active'"
+               th:id="${'tab-' + board.boardName}"
+               data-toggle="tab"
+               th:href="${'#board-' + board.boardName}"
+               role="tab"
+               th:aria-controls="${'board-' + board.boardName}"
+               aria-selected="false">
+                <span th:text="${board.boardName}">Board Name</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="boardTabContent">
+        <div th:each="board, iterStat : ${boards}"
+             class="tab-pane fade"
+             th:classappend="${iterStat.index == 0} ? 'show active'"
+             th:id="${'board-' + board.boardName}"
+             role="tabpanel"
+             th:aria-labelledby="${'tab-' + board.boardName}">
+
+            <!-- 게시판 제목 -->
+            <h3 class="mt-3" th:text="'게시판: ' + ${board.boardName}">Board Name</h3>
+
+            <!-- 최근 글 5개 -->
+            <ul class="list-group mt-3"
+                th:if="${!#lists.isEmpty(recentPostsMap[board.boardId])}">
+                <li class="list-group-item"
+                    th:each="post : ${recentPostsMap[board.boardId]}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a th:href="@{/boards/{boardName}/posts/{postId}(boardName=${board.boardName}, postId=${post.postId})}"
+                           th:text="${post.title}">Post Title</a>
+                        <small th:text="${#dates.format(post.createdDate, 'yyyy-MM-dd HH:mm')}">Date</small>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- 최근 글이 없을 경우 -->
+            <div th:if="${#lists.isEmpty(recentPostsMap[board.boardId])}" class="mt-3">
+                <p>최근 게시물이 없습니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS 및 종속성 -->
+<script th:src="@{https://code.jquery.com/jquery-3.2.1.slim.min.js}"></script>
+<script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js}"></script>
+<script th:src="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js}"></script>
+</body>
+</html>

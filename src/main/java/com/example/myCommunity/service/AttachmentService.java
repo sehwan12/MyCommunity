@@ -31,7 +31,7 @@ public class AttachmentService{
     /**
      * 파일 업로드 디렉토리 초기화
      */
-    @Transactional
+    //@Transactional
     public void init() {
         File dir = new File(uploadDir);
         if (!dir.exists()) {
@@ -42,6 +42,7 @@ public class AttachmentService{
     /**
      * 첨부파일 추가 (단일 파일)
      */
+    //메소드 추상화 필요
     @Transactional
     public Attachment addAttachmentToPost(Long postId, Long currentUserId, MultipartFile file) {
         Post post = postRepository.findById(postId)

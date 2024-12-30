@@ -3,11 +3,12 @@ package com.example.myCommunity.service;
 import com.example.myCommunity.Exception.*;
 import com.example.myCommunity.domain.Comment;
 import com.example.myCommunity.domain.Post;
-import com.example.myCommunity.domain.User;
+import com.example.myCommunity.domain.Users;
 import com.example.myCommunity.domain.heart.CommentHeart;
-import com.example.myCommunity.domain.heart.Heart;
 import com.example.myCommunity.domain.heart.PostHeart;
 import com.example.myCommunity.repository.*;
+import org.apache.catalina.User;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,15 +25,40 @@ public class HeartService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
-    /**
-     * 게시물에 하트 추가
-     */
-    @Transactional
-    public Heart addHeartToPost(Long userId, Long postId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        Post post = postRepository.findById(postId)
+    // 헬퍼 메소드들
+    private Users getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+    }
+
+    private Post getPostById(Long postId) {
+        return postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+    }
+
+    private Comment getCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
+    }
+
+    private PostHeart getPostHeartById(Long userId, Long postId) {
+        Post post=getPostById(postId);
+        Users user=getUserById(userId);
+        return postHeartRepository.findByUserAndPost(user, post)
+                .orElseThrow(() -> new HeartNotFoundException("하트를 찾을 수 없습니다."));
+    }
+
+    CommentHeart getCommentHeartById(Long userId, Long commentId) {
+        Users user=getUserById(userId);
+        Comment comment=getCommentById(commentId);
+        return commentHeartRepository.findByUserAndComment(user, comment)
+                .orElseThrow(()-> new HeartNotFoundException("하트를 찾을 수 없습니다."));
+    }
+    //게시물에 하트 추가
+    @Transactional
+    public Long addHeartToPost(Long userId, Long postId) {
+        Users user=getUserById(userId);
+        Post post=getPostById(postId);
 
         // 이미 하트를 추가했는지 확인
         Optional<PostHeart> existingHeart = postHeartRepository.findByUserAndPost(user, post);
@@ -41,37 +67,28 @@ public class HeartService {
         }
 
         // 새로운 PostHeart 생성
+        // heart는 builder보다 생성자를 쓰는게 나을까?
         PostHeart heart = PostHeart.builder()
                 .user(user)
                 .post(post)
                 .build();
 
-        return postHeartRepository.save(heart);
+        postHeartRepository.save(heart);
+        return heart.getHeartId();
     }
 
-    /**
-     * 게시물에 하트 삭제
-     */
+    //게시물에 하트 삭제
     @Transactional
     public void removeHeartFromPost(Long userId, Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
-        User user= userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-        PostHeart heart = postHeartRepository.findByUserAndPost(user, post)
-                .orElseThrow(() -> new HeartNotFoundException("하트를 찾을 수 없습니다."));
-
+        PostHeart heart = getPostHeartById(userId,postId);
         postHeartRepository.delete(heart);
     }
 
-    /**
-     * 댓글에 하트 추가
-     */
+    //댓글에 하트 추가
     @Transactional
-    public Heart addHeartToComment(Long userId, Long commentId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
+    public Long addHeartToComment(Long userId, Long commentId) {
+        Users user=getUserById(userId);
+        Comment comment=getCommentById(commentId);
 
         // 이미 하트를 추가했는지 확인
         Optional<CommentHeart> existingHeart = commentHeartRepository.findByUserAndComment(user, comment);
@@ -85,70 +102,43 @@ public class HeartService {
                 .comment(comment)
                 .build();
 
-        return commentHeartRepository.save(heart);
+        commentHeartRepository.save(heart);
+        return heart.getHeartId();
     }
 
-    /**
-     * 댓글에 하트 삭제
-     */
+    // 댓글에 하트 삭제
     @Transactional
     public void removeHeartFromComment(Long userId, Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
-        User user= userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-        CommentHeart heart = commentHeartRepository.findByUserAndComment(user, comment)
-                .orElseThrow(() -> new HeartNotFoundException("하트를 찾을 수 없습니다."));
-
+        CommentHeart heart = getCommentHeartById(userId,commentId);
         commentHeartRepository.delete(heart);
     }
 
-    /**
-     * 특정 게시물의 하트 수 조회
-     */
+
+    // 특정 게시물의 하트 수 조회
     @Transactional(readOnly = true)
     public Long countHeartsByPost(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+        Post post = getPostById(postId);
         return postHeartRepository.countByPost(post);
     }
 
-    /**
-     * 특정 댓글의 하트 수 조회
-     */
+    // 특정 댓글의 하트 수 조회
     @Transactional(readOnly = true)
     public Long countHeartsByComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
+        Comment comment = getCommentById(commentId);
         return commentHeartRepository.countByComment(comment);
     }
 
-//    /**
-//     * 사용자별 하트 목록 조회
-//     */
-//    @Transactional(readOnly = true)
-//    public List<Heart> getHeartsByUser(Long userId) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-//        // 하트 엔티티는 다형성을 가지므로, 필요에 따라 하위 클래스로 캐스팅할 수 있습니다.
-//        return postHeartRepository.findAllByUser(user);
-//    }
-
-    /**
-     * 사용자별 게시물 하트 목록 조회
-     */
+    // 사용자별 게시물 하트 목록 조회
     @Transactional(readOnly = true)
     public List<PostHeart> getPostHeartsByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-        // PostHeart만 조회하기 위해 별도의 리포지토리 메소드가 필요할 수 있습니다.
-        //return heartRepository.findAllByUserAndDiscriminator(user, "POST");
+        Users user = getUserById(userId);
         return postHeartRepository.findAllPostHeartByUser(user);
     }
-    //사용자별 댓글 하트 목록 조회
+
+    // 사용자별 댓글 하트 목록 조회
     @Transactional(readOnly = true)
     public List<CommentHeart> getCommentHeartsByUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(
-                ()->new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        Users user = getUserById(userId);
         return commentHeartRepository.findAllCommentHeartByUser(user);
     }
 
