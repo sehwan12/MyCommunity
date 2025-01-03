@@ -71,7 +71,7 @@ class AttachmentServiceTest {
 
         // 테스트 사용자 생성
         testUser = Users.builder()
-                .username("testUser")
+                .userName("testUser")
                 .userEmail("testuser@example.com") // 이메일 설정
                 .build();
         userRepository.save(testUser);
@@ -140,7 +140,7 @@ class AttachmentServiceTest {
         // given
         // 다른 사용자 생성
         Users anotherUser = Users.builder()
-                .username("anotherUser")
+                .userName("anotherUser")
                 .userEmail("anotheruser@example.com")
                 .build();
         userRepository.save(anotherUser);
@@ -318,7 +318,7 @@ class AttachmentServiceTest {
 
         // 다른 사용자 생성
         Users anotherUser = Users.builder()
-                .username("anotherUser")
+                .userName("anotherUser")
                 .userEmail("anotheruser@example.com")
                 .build();
         userRepository.save(anotherUser);

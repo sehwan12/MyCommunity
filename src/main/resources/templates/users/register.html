@@ -1,10 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>register</title>
+    <title>회원가입 - My Community</title>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css}" rel="stylesheet"/>
+    <style>
+        body {
+            padding-top: 70px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.875em;
+        }
+    </style>
 </head>
 <body>
-    register
+<div th:replace="navvar :: navbar"></div>
+
+<!-- 메인 컨테이너 -->
+<div class="container mt-5">
+    <h2 class="mb-4">회원가입</h2>
+
+    <!-- 플래시 메시지 -->
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <p th:text="${successMessage}"></p>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <!-- 회원가입 폼 -->
+    <form th:action="@{/users/register}" th:object="${userRegistrationDTO}" method="post" novalidate>
+
+        <!-- 이메일 -->
+        <div class="form-group">
+            <label for="userEmail">이메일</label>
+            <input type="email" class="form-control" id="userEmail" th:field="*{userEmail}" placeholder="이메일을 입력하세요">
+            <div class="error-message" th:if="${#fields.hasErrors('userEmail')}" th:errors="*{userEmail}"></div>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="form-group">
+            <label for="userPassword">비밀번호</label>
+            <input type="password" class="form-control" id="userPassword" th:field="*{userPassword}" placeholder="비밀번호를 입력하세요">
+            <div class="error-message" th:if="${#fields.hasErrors('userPassword')}" th:errors="*{userPassword}"></div>
+        </div>
+
+        <!-- 전화번호 -->
+        <div class="form-group">
+            <label for="userPhone">전화번호</label>
+            <input type="text" class="form-control" id="userPhone" th:field="*{userPhone}" placeholder="전화번호를 입력하세요">
+            <div class="error-message" th:if="${#fields.hasErrors('userPhone')}" th:errors="*{userPhone}"></div>
+        </div>
+
+        <!-- 생년월일 -->
+        <div class="form-group">
+            <label for="birthdate">생년월일</label>
+            <input type="date" class="form-control" id="birthdate" th:field="*{birthdate}">
+            <div class="error-message" th:if="${#fields.hasErrors('birthdate')}" th:errors="*{birthdate}"></div>
+        </div>
+
+        <!-- 사용자 등급 -->
+        <div class="form-group">
+            <label for="userGrade">사용자 등급</label>
+            <select class="form-control" id="userGrade" th:field="*{userGrade}">
+                <option value="" disabled selected>선택하세요</option>
+                <option th:each="grade : ${T(com.example.myCommunity.domain.UserGrade).values()}"
+                        th:value="${grade}" th:text="${grade}">User Grade</option>
+            </select>
+            <div class="error-message" th:if="${#fields.hasErrors('userGrade')}" th:errors="*{userGrade}"></div>
+        </div>
+
+        <!-- 닉네임 -->
+        <div class="form-group">
+            <label for="username">닉네임</label>
+            <input type="text" class="form-control" id="username" th:field="*{userName}" placeholder="닉네임을 입력하세요">
+            <div class="error-message" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
+        </div>
+
+        <!-- 제출 버튼 -->
+        <button type="submit" class="btn btn-primary">회원가입</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS 및 종속성 -->
+<script th:src="@{https://code.jquery.com/jquery-3.2.1.slim.min.js}"></script>
+<script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js}"></script>
+<script th:src="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js}"></script>
 </body>
 </html>

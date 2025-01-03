@@ -10,7 +10,6 @@ import com.example.myCommunity.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,10 +56,12 @@ public class UserController {
 
     // 회원가입 페이지 표시
     @GetMapping("/register")
-    public String registerForm(Model model){
+    public String registerForm(Model model, HttpSession session) {
         //addAttribute(String name, Object value): value 객체를 name 이름으로 추가해줌
         //View에서 name으로 지정된 value를 사용
+        Long sessionUserId = (Long) session.getAttribute("userId");
         model.addAttribute("userRegistrationDTO", new UserRegistrationDTO());
+        model.addAttribute("sessionUserId", sessionUserId);
         return "users/register";
     }
 
@@ -78,7 +79,7 @@ public class UserController {
         try {
             Long savedId = userService.registerUser(registrationDTO);
             Users user=userService.getUserById(savedId);
-            String username=user.getUsername();
+            String username=user.getUserName();
             redirectAttributes.addFlashAttribute("successMessage",
                     username+"님, 회원가입이 성공적으로 완료되었습니다. 로그인해주세요.");
             return "redirect:/users/login"; // 회원가입 성공 시 로그인 페이지로 리다이렉트
@@ -93,9 +94,8 @@ public class UserController {
     //클라이언트가 처음 서버에 연결을 하면 어떤 하나의 Session ID가 생성된다
     @GetMapping("/mypage")
     public String showMyPage(Model model, HttpSession session) {
-        // 세션 또는 인증된 사용자 정보로부터 userId를 가져오는 대신 경로 변수로 받습니다.
 
-        // 세션의 사용자와 요청된 userId가 일치하는지 확인 (보안상 필요)
+        // 세션의 사용자와 요청된 userId가 일치하는지 확인
         Long sessionUserId = (Long) session.getAttribute("userId");
         if (sessionUserId == null ) {
             return "redirect:/users/login"; // 또는 에러 페이지로 리다이렉트
@@ -103,14 +103,23 @@ public class UserController {
 
         Users user = userService.getUserById(sessionUserId);
         UserResponseDTO responseDTO=UserResponseDTO.fromEntity(user);
+        UserUpdateDTO updateDTO = UserUpdateDTO.builder()
+                .userId(user.getUserId())
+                .userPhone(user.getUserPhone())
+                .birthdate(user.getBirthdate())
+                .userName(user.getUserName())
+                .userPassword(user.getUserPassword())
+                .build();
+        model.addAttribute("sessionUserId", sessionUserId);
         model.addAttribute("user", responseDTO);
+        model.addAttribute("userUpdateDTO", updateDTO);
+
         return "users/mypage"; // mypage.html 뷰를 반환
     }
 
     //마이페이지 수정
-    @PostMapping("/{userId}/mypage")
-    public String updateMyPage(@PathVariable Long userId,
-                               @Valid @ModelAttribute UserUpdateDTO updateDTO,
+    @PostMapping("/mypage")
+    public String updateMyPage(@Valid @ModelAttribute UserUpdateDTO updateDTO,
                                BindingResult bindingResult,
                                Model model,
                                HttpSession session,
@@ -122,14 +131,14 @@ public class UserController {
 
         // 세션의 사용자와 요청된 userId가 일치하는지 확인
         Long sessionUserId = (Long) session.getAttribute("userId");
-        if (sessionUserId == null || !sessionUserId.equals(userId)) {
+        if (sessionUserId == null ) {
             return "redirect:/users/login"; // 또는 에러 페이지로 리다이렉트
         }
 
         try {
             userService.updateUser(updateDTO);
             redirectAttributes.addFlashAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
-            return "redirect:/users/" + userId + "/mypage"; // 수정 후 마이페이지로 리다이렉트
+            return "redirect:/users/mypage"; // 수정 후 마이페이지로 리다이렉트
         } catch (UserNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "users/mypage"; // 오류 발생 시 다시 마이페이지로
@@ -138,7 +147,9 @@ public class UserController {
 
     //로그인 페이지 표시
     @GetMapping("/login")
-    public String showLoginForm(Model model) {
+    public String showLoginForm(Model model,HttpSession session) {
+        Long sessionUserId = (Long) session.getAttribute("userId");
+        model.addAttribute("sessionUserId", sessionUserId);
         model.addAttribute("userLoginDTO", new UserLoginDTO());
         return "users/login";
     }
@@ -149,7 +160,8 @@ public class UserController {
     public String login(@Valid @ModelAttribute UserLoginDTO loginDTO,
                         BindingResult bindingResult,
                         Model model,
-                        HttpSession session) {
+                        HttpSession session,
+                        RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "users/login"; // 유효성 검사 실패 시 다시 로그인 페이지로
         }
@@ -158,7 +170,8 @@ public class UserController {
             Long userId = userService.login(loginDTO);
             // 세션에 사용자 정보 저장
             session.setAttribute("userId", userId);
-            return "redirect:/users/mypage"; // 로그인 성공 시 마이페이지로 리다이렉트
+            //redirectAttributes.addFlashAttribute("successMessage", "로그인되었습니다.");
+            return "redirect:/home"; // 로그인 성공 시 홈으로 리다이렉트
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "users/login";

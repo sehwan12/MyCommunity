@@ -55,7 +55,7 @@ class CommentServiceTest {
 
         // 테스트 사용자 생성
         testUser = Users.builder()
-                .username("testUser")
+                .userName("testUser")
                 .userEmail("testuser@example.com") // 이메일 설정
                 .build();
         userRepository.save(testUser);
@@ -231,7 +231,7 @@ class CommentServiceTest {
         // given
         // 다른 사용자 생성
         Users anotherUser = Users.builder()
-                .username("anotherUser")
+                .userName("anotherUser")
                 .userEmail("anotheruser@example.com")
                 .build();
         userRepository.save(anotherUser);
@@ -330,7 +330,7 @@ class CommentServiceTest {
         // given
         // 다른 사용자 생성
         Users anotherUser = Users.builder()
-                .username("anotherUser")
+                .userName("anotherUser")
                 .userEmail("anotheruser@example.com")
                 .build();
         userRepository.save(anotherUser);

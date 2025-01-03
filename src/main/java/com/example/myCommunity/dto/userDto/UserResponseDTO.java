@@ -15,6 +15,8 @@ public class UserResponseDTO {
     private String userEmail;
     private String userPhone;
     private UserGrade userGrade;
+    private LocalDate birthdate;
+    private String userPassword;
     // 필요한 필드 추가
 
     /**
@@ -25,10 +27,12 @@ public class UserResponseDTO {
     public static UserResponseDTO fromEntity(Users user) {
         return UserResponseDTO.builder()
                 .userId(user.getUserId())
-                .userName(user.getUsername())
+                .userName(user.getUserName())
                 .userEmail(user.getUserEmail())
                 .userPhone(user.getUserPhone())
                 .userGrade(user.getUserGrade())
+                .birthdate(user.getBirthdate())
+                .userPassword(user.getUserPassword())
                 .build();
     }
 }

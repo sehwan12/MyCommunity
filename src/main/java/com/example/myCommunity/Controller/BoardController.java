@@ -34,7 +34,7 @@ public class BoardController {
      * @param model    모델 객체
      * @return         게시판 템플릿
      */
-    @GetMapping("/boards/{boardName}")
+    @GetMapping("/{boardName}")
     public String boardPage(
             @PathVariable("boardName") String boardName,
             @RequestParam(defaultValue = "0") int page,

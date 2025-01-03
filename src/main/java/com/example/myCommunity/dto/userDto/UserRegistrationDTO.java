@@ -4,6 +4,7 @@ import com.example.myCommunity.domain.UserGrade;
 import com.example.myCommunity.domain.Users;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -23,15 +24,15 @@ public class UserRegistrationDTO {
     @Size(min=10, max=15,message = "전화번호는 10자리 이상 15자리 이하여야 합니다.")
     private String userPhone;
 
-    @NotBlank(message= "생년월일은 필수 입력 사항입니다")
+    @NotNull(message= "생년월일은 필수 입력 사항입니다")
     private LocalDate birthdate;
 
-    @NotBlank
+    @NotNull
     private UserGrade userGrade;
 
     @NotBlank(message = "닉네임은 필수 입력 사항입니다.")
     @Size(min =2,max=10, message = "닉네임은 2자 이상 10자 이하여야 합니다.")
-    private String username;
+    private String userName;
 
     //dto->entity 변환
     public Users toEntity(){
@@ -41,7 +42,7 @@ public class UserRegistrationDTO {
                 .userPhone(userPhone)
                 .birthdate(birthdate)
                 .userGrade(userGrade)
-                .username(username)
+                .userName(userName)
                 .build();
     }
 }

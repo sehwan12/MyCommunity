@@ -47,7 +47,7 @@ class PostServiceTest {
     void setUp() {
         // 테스트 사용자 생성
         testUser = Users.builder()
-                .username("testUser")
+                .userName("testUser")
                 .userEmail("testUser@gmail.com")
                 .build();
         userRepository.save(testUser);
@@ -132,7 +132,7 @@ class PostServiceTest {
 
         // 다른 사용자 생성
         Users anotherUser = Users.builder()
-                .username("anotherUser")
+                .userName("anotherUser")
                 .userEmail("testUser2@gmail.com")
                 .build();
         userRepository.save(anotherUser);
@@ -177,7 +177,7 @@ class PostServiceTest {
 
         // 다른 사용자 생성
         Users anotherUser = Users.builder()
-                .username("anotherUser")
+                .userName("anotherUser")
                 .userEmail("testUser@gmail.com")
                 .build();
         userRepository.save(anotherUser);
@@ -230,7 +230,7 @@ class PostServiceTest {
         // given
         // 다른 사용자 생성
         Users anotherUser = Users.builder()
-                .username("anotherUser")
+                .userName("anotherUser")
                 .userEmail("testUser2@gmail.com")
                 .build();
         userRepository.save(anotherUser);

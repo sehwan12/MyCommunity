@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.HashMap;
@@ -35,7 +34,7 @@ public class HomeController {
         });
 
         // 세션에서 사용자 ID 가져오기 (로그인 기능 구현 시 설정)
-        Long sessionUserId = (Long) session.getAttribute("sessionUserId");
+        Long sessionUserId = (Long) session.getAttribute("userId");
 
         model.addAttribute("boards",boards);
         model.addAttribute("recentPostsMap", recentPostsMap);

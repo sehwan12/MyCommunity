@@ -3,53 +3,19 @@
 <head>
     <title>My Community - Home</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
     <!-- Bootstrap CSS -->
     <link th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css}" rel="stylesheet"/>
+    <style>
+        body {
+            padding-top: 70px;
+        }
+    </style>
 </head>
 <body>
-<!-- 네비게이션 바 -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" th:href="@{/home}">My Community</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <!-- 좌측 메뉴 (필요 시 추가) -->
-        <ul class="navbar-nav mr-auto">
-            <!-- 예: 홈, 게시판 등 -->
-            <li class="nav-item active">
-                <a class="nav-link" th:href="@{/home}">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <!-- 추가 메뉴 항목 -->
-        </ul>
-        <!-- 우측 메뉴 -->
-        <ul class="navbar-nav">
-            <!-- 비인증 사용자에게만 표시 -->
-            <li class="nav-item" th:if="${sessionUserId == null}">
-                <a class="nav-link" th:href="@{/users/register}">회원가입</a>
-            </li>
-            <li class="nav-item" th:if="${sessionUserId == null}">
-                <a class="nav-link" th:href="@{/users/login}">로그인</a>
-            </li>
-            <!-- 인증된 사용자에게만 표시 -->
-            <li class="nav-item" th:if="${sessionUserId != null}">
-                <a class="nav-link" th:href="@{/users/mypage}">마이페이지</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+<div th:replace="navvar :: navbar"></div>
 
 <!-- 메인 컨테이너 -->
 <div class="container mt-4">
-    <!-- 플래시 메시지 -->
-    <div th:if="${successMessage}" class="alert alert-success" role="alert">
-        <p th:text="${successMessage}"></p>
-    </div>
-    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-        <p th:text="${errorMessage}"></p>
-    </div>
 
     <!-- 게시판 탭 바 -->
     <ul class="nav nav-tabs" id="boardTab" role="tablist">
@@ -85,7 +51,7 @@
                 <li class="list-group-item"
                     th:each="post : ${recentPostsMap[board.boardId]}">
                     <div class="d-flex justify-content-between align-items-center">
-                        <a th:href="@{/boards/{boardName}/posts/{postId}(boardName=${board.boardName}, postId=${post.postId})}"
+                        <a th:href="@{/{boardName}/{postId}(boardName=${board.boardName}, postId=${post.postId})}"
                            th:text="${post.title}">Post Title</a>
                         <small th:text="${#dates.format(post.createdDate, 'yyyy-MM-dd HH:mm')}">Date</small>
                     </div>

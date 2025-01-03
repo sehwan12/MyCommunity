@@ -57,17 +57,17 @@ class UsersServiceTest {
         userRegistrationDTO.setUserEmail("tlrpv12@naver.com");
         userRegistrationDTO.setUserPhone("010-1234-5678");
         userRegistrationDTO.setUserPassword("12345678");
-        userRegistrationDTO.setUsername("kento");
+        userRegistrationDTO.setUserName("kento");
         return userRegistrationDTO;
     }
 
     private UserUpdateDTO getUserUpdateDTO() {
-        UserUpdateDTO userUpdateDTO=new UserUpdateDTO();
-        userUpdateDTO.setBirthdate(LocalDate.of(2001,7,4));
-        userUpdateDTO.setUserPassword("09876543");
-        userUpdateDTO.setUserPhone("011-1234-5678");
-        userUpdateDTO.setUsername("nanami");
-        return userUpdateDTO;
+        return UserUpdateDTO.builder().
+                birthdate(LocalDate.of(2001,7,4)).
+                userPassword("09876543").
+                userPhone("011-1234-5678").
+                userName("nanami").
+                build();
     }
     //로그인 성공
     private UserLoginDTO getUserLoginDTO() {
@@ -106,7 +106,7 @@ class UsersServiceTest {
         assertEquals(registrationDTO.getUserGrade(), user.getUserGrade());
         assertEquals(registrationDTO.getUserPhone(), user.getUserPhone());
         assertEquals(registrationDTO.getBirthdate(), user.getBirthdate());
-        assertEquals(registrationDTO.getUsername(), user.getUsername());
+        assertEquals(registrationDTO.getUserName(), user.getUserName());
     }
 
 
@@ -147,7 +147,7 @@ class UsersServiceTest {
         assertEquals(updateDTO.getUserPassword(), user.getUserPassword());
         assertEquals(updateDTO.getUserPhone(), user.getUserPhone());
         assertEquals(updateDTO.getBirthdate(), user.getBirthdate());
-        assertEquals(updateDTO.getUsername(), user.getUsername());
+        assertEquals(updateDTO.getUserName(), user.getUserName());
     }
 
     @Test

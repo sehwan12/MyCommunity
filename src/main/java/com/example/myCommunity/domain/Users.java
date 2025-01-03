@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -19,7 +20,7 @@ public class Users {
     @Column(name = "user_id")
     private Long userId;
 
-    private String username;
+    private String userName;
 
     @Size(min=8, max=20)
     private String userPassword;
@@ -45,8 +46,8 @@ public class Users {
     }
 
     @Builder
-    public Users(String username, String userPassword, UserGrade userGrade, String userPhone, LocalDate birthdate, String userEmail) {
-        this.username = username;
+    public Users(String userName, String userPassword, UserGrade userGrade, String userPhone, LocalDate birthdate, String userEmail) {
+        this.userName = userName;
         this.userPassword = userPassword;
         this.userGrade = userGrade;
         this.userPhone = userPhone;
@@ -73,8 +74,8 @@ public class Users {
     }
 
     private  void updateName(UserUpdateDTO userUpdateDTO){
-        if(userUpdateDTO.getUsername()!=null){
-            this.username = userUpdateDTO.getUsername();
+        if(userUpdateDTO.getUserName()!=null){
+            this.userName = userUpdateDTO.getUserName();
         }
     }
 }
