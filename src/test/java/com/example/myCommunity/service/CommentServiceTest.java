@@ -211,13 +211,9 @@ class CommentServiceTest {
     void 댓글수정_성공() {
         // given
         String updatedContent = "수정된 댓글 내용";
-        CommentEditDTO editDTO = CommentEditDTO.builder()
-                .content(updatedContent)
-                .commentId(testComment.getCommentId())
-                .build();
 
         // when
-        commentService.editComment(testUser.getUserId(), editDTO);
+        commentService.editComment(testUser.getUserId(), updatedContent, testPost.getPostId());
 
         // then
         assertEquals(updatedContent, testComment.getCommentText());
@@ -237,14 +233,10 @@ class CommentServiceTest {
         userRepository.save(anotherUser);
 
         String updatedContent = "수정된 댓글 내용";
-        CommentEditDTO editDTO = CommentEditDTO.builder()
-                .content(updatedContent)
-                .commentId(testComment.getCommentId())
-                .build();
 
         // when & then
         UnauthorizedException exception = assertThrows(UnauthorizedException.class, () -> {
-            commentService.editComment(anotherUser.getUserId(), editDTO);
+            commentService.editComment(anotherUser.getUserId(), updatedContent, testPost.getPostId());
         });
 
         assertEquals("댓글을 수정할 권한이 없습니다.", exception.getMessage());
@@ -262,14 +254,10 @@ class CommentServiceTest {
     void 댓글수정실패_댓글존재x() {
         // given
         Long nonExistentCommentId = 999L;
-        CommentEditDTO editDTO = CommentEditDTO.builder()
-                .content("수정된 댓글 내용")
-                .commentId(nonExistentCommentId)
-                .build();
 
         // when & then
         CommentNotFoundException exception = assertThrows(CommentNotFoundException.class, () -> {
-            commentService.editComment(testUser.getUserId(), editDTO);
+            commentService.editComment(testUser.getUserId(), "수정된 댓글 내용", testPost.getPostId());
         });
 
         assertEquals("댓글을 찾을 수 없습니다.", exception.getMessage());
@@ -283,7 +271,7 @@ class CommentServiceTest {
         // given
         Long nonExistentUserId = 999L;
         CommentEditDTO editDTO = CommentEditDTO.builder()
-                .content("수정된 댓글 내용")
+                .commentText("수정된 댓글 내용")
                 .build();
 
         // when & then

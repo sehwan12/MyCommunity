@@ -1,10 +1,224 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>post</title>
+    <title th:text="${post.title} + ' - My Community'">글 제목 - My Community</title>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css}" rel="stylesheet"/>
+    <style>
+        body {
+            padding-top: 70px;
+        }
+        .post-content {
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 <body>
-    post
+<!-- 네비게이션 바 -->
+<div th:replace="~{fragments/navvar :: navbar}"></div>
+
+<!-- 메인 컨테이너 -->
+<div class="container mt-4">
+    <!-- 글 상세 내용 -->
+    <div class="card">
+        <div class="card-header">
+            <h3 th:text="${post.title}">글 제목</h3>
+            <small th:text="${post.user.userName + ' | ' + #temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}">작성자 | 작성일</small>
+        </div>
+        <div class="card-body">
+            <p class="post-content" th:text="${post.postText}">글 내용</p>
+
+            <!-- 첨부파일 표시 -->
+            <div th:if="${!post.attachments.isEmpty()}" class="mt-4">
+                <h5>첨부파일</h5>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="attachment : ${post.attachments}">
+                        <!-- 파일명 클릭 시 다운로드 -->
+                        <a th:href="@{/attachments/download/{id}(id=${attachment.attachmentId})}" th:text="${attachment.fileName}" target="_blank">첨부파일 링크</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <!-- 수정 및 삭제 버튼 (작성자에게만 표시) -->
+            <div th:if="${sessionUserId != null and sessionUserId == post.user.userId}">
+                <a th:href="@{/{boardName}/editPost/{postId}(boardName=${post.board.boardName}, postId=${post.postId})}" class="btn btn-secondary">수정</a>
+                <form th:action="@{/{boardName}/deletePost/{postId}(boardName=${post.board.boardName}, postId=${post.postId})}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 댓글 섹션 (추가 구현 가능) -->
+    <div class="mt-5">
+        <h4>댓글</h4>
+        <!-- 댓글 목록 표시 -->
+        <ul class="list-group">
+            <li class="list-group-item" th:each="comment : ${post.comments}">
+                <div id="comment-display-[[${comment.commentId}]]">
+                    <strong th:text="${comment.userName}">작성자</strong>
+                    <span th:text="${#temporals.format(comment.createdDate, 'yyyy-MM-dd HH:mm')}">작성일</span>
+                    <p th:text="${comment.commentText}">댓글 내용</p>
+                    <!-- 대댓글 작성 버튼 -->
+                    <button class="btn btn-sm btn-link"
+                            th:attr="data-comment-id=${comment.commentId}"
+                            onclick="showReplyForm('[[${comment.commentId}]]');">대댓글 작성</button>
+                    <!-- 댓글 수정 버튼 -->
+                    <button class="btn btn-sm btn-link" onclick="showEditForm('[[${comment.commentId}]]');">수정</button>
+                    <!-- 댓글 삭제 폼 -->
+                    <form th:action="@{/{postId}/comments/delete(postId=${post.postId})}" method="post" style="display: inline;">
+                        <input type="hidden" name="commentId" th:value="${comment.commentId}" />
+                        <button type="submit" class="btn btn-sm btn-link" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                    </form>
+                </div>
+
+                <!-- 댓글 수정 폼 -->
+                <div id="comment-edit-[[${comment.commentId}]]" class="comment-edit-form" style="display: none">
+                    <form th:action="@{/{postId}/comments/edit(postId=${post.postId})}" method="post">
+                        <!-- 댓글 ID 전달 -->
+                        <input type="hidden" name="commentId" th:value="${comment.commentId}" />
+                        <div class="form-group">
+                            <label for="newContent-[[${comment.commentId}]]">댓글 수정</label>
+                            <textarea class="form-control" id="newContent-[[${comment.commentId}]]" name="newContent" rows="3" required th:text="${comment.commentText}"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">수정</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEdit('[[${comment.commentId}]]')">취소</button>
+                    </form>
+                </div>
+                <!-- 대댓글 작성 폼 -->
+                <div id="reply-form-[[${comment.commentId}]]" class="reply-form ml-4" style="display: none">
+                    <form th:action="@{/{postId}/comments/add(postId=${post.postId})}" method="post">
+                        <!-- 게시글 ID 전달 -->
+                        <input type="hidden" name="postId" th:value="${post.postId}" />
+                        <!-- 부모 댓글 ID 전달 -->
+                        <input type="hidden" name="parentId" th:value="${comment.commentId}" />
+                        <div class="form-group">
+                            <label for="replyContent-[[${comment.commentId}]]">대댓글 작성</label>
+                            <textarea class="form-control" id="replyContent-[[${comment.commentId}]]" name="content" rows="3" placeholder="대댓글을 입력하세요" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">대댓글 작성</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="hideReplyForm('[[${comment.commentId}]]')">취소</button>
+                    </form>
+                </div>
+                <!-- 대댓글 목록 표시 -->
+                <ul class="list-group ml-4">
+                    <li class="list-group-item" th:each="reply : ${comment.replies}">
+                        <div id="comment-display-[[${reply.commentId}]]">
+                            <strong th:text="${reply.userName}">작성자</strong>
+                            <span th:text="${#temporals.format(reply.createdDate, 'yyyy-MM-dd HH:mm')}">작성일</span>
+                            <p th:text="${reply.commentText}">댓글 내용</p>
+                            <!-- 대댓글 작성 버튼 -->
+                            <button class="btn btn-sm btn-link"
+                                    th:attr="data-reply-id=${reply.commentId}"
+                                    onclick="showReplyForm('[[${reply.commentId}]]');">대댓글 작성</button>
+                            <!-- 대댓글 수정 버튼 -->
+                            <button class="btn btn-sm btn-link" onclick="showEditForm('[[${reply.commentId}]]');">수정</button>
+                            <!-- 대댓글 삭제 폼 -->
+                            <form th:action="@{/{postId}/comments/delete(postId=${post.postId})}" method="post" style="display: inline;">
+                                <input type="hidden" name="commentId" th:value="${reply.commentId}" />
+                                <button type="submit" class="btn btn-sm btn-link" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                            </form>
+                        </div>
+
+                        <!-- 대댓글 수정 폼 -->
+                        <div id="comment-edit-[[${reply.commentId}]]" class="comment-edit-form" style="display: none">
+                            <form th:action="@{/{postId}/comments/edit(postId=${post.postId})}" method="post">
+                                <!-- 댓글 ID 전달 -->
+                                <input type="hidden" name="commentId" th:value="${reply.commentId}" />
+                                <div class="form-group">
+                                    <label for="newContent-[[${reply.commentId}]]">댓글 수정</label>
+                                    <textarea class="form-control" id="newContent-[[${reply.commentId}]]" name="newContent" rows="3" required th:text="${reply.commentText}"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">수정</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEdit('[[${reply.commentId}]]')">취소</button>
+                            </form>
+                        </div>
+
+                        <!-- 대댓글 작성 폼 -->
+                        <div id="reply-form-[[${reply.commentId}]]" class="reply-form ml-4" style="display: none">
+                            <form th:action="@{/{postId}/comments/add(postId=${post.postId})}" method="post">
+                                <!-- 게시글 ID 전달 -->
+                                <input type="hidden" name="postId" th:value="${post.postId}" />
+                                <!-- 부모 댓글 ID 전달 -->
+                                <input type="hidden" name="parentId" th:value="${reply.commentId}" />
+                                <div class="form-group">
+                                    <label for="replyContent-[[${reply.commentId}]]">대댓글 작성</label>
+                                    <textarea class="form-control" id="replyContent-[[${reply.commentId}]]" name="content" rows="3" placeholder="대댓글을 입력하세요" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">대댓글 작성</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="hideReplyForm('[[${reply.commentId}]]')">취소</button>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- 댓글 작성 폼 -->
+        <form th:action="@{/{postId}/comments/add(postId=${post.postId})}" method="post" class="mt-3">
+
+            <!-- 게시글 ID 전달 -->
+            <input type="hidden" name="postId" th:value="${post.postId}" />
+
+            <!-- 대댓글의 경우 부모 댓글 ID 전달 (선택 사항) -->
+            <input type="hidden" name="parentId" th:value="${null}" /> <!-- 새 댓글의 경우 null, 대댓글의 경우 해당 부모 댓글 ID로 설정 -->
+
+            <div class="form-group">
+                <label for="comment">댓글 작성</label>
+                <textarea class="form-control" id="comment" name="content" rows="3" placeholder="댓글을 입력하세요" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">댓글 작성</button>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS 및 종속성 -->
+<script th:src="@{https://code.jquery.com/jquery-3.2.1.slim.min.js}"></script>
+<script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js}"></script>
+<script th:src="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js}"></script>
+
+<script>
+    // 대댓글 작성 폼을 표시하는 함수
+    function showReplyForm(commentId) {
+        var form = document.getElementById('reply-form-' + commentId);
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+
+    // 대댓글 작성 폼을 숨기는 함수
+    function hideReplyForm(commentId) {
+        var form = document.getElementById('reply-form-' + commentId);
+        form.style.display = 'none';
+    }
+    // 부모 댓글 ID를 설정하는 함수
+    function setParentId(parentId) {
+        document.getElementById('parentId').value = parentId;
+        // 포커스를 댓글 작성 textarea로 이동
+        document.getElementById('comment').focus();
+    }
+
+    // 댓글 수정 폼을 표시하는 함수
+    function showEditForm(commentId) {
+        // 현재 댓글 표시 영역 숨기기
+        document.getElementById('comment-display-' + commentId).style.display = 'none';
+        // 수정 폼 표시
+        document.getElementById('comment-edit-' + commentId).style.display = 'block';
+    }
+
+    // 댓글 수정 폼을 취소하는 함수
+    function cancelEdit(commentId) {
+        // 수정 폼 숨기기
+        document.getElementById('comment-edit-' + commentId).style.display = 'none';
+        // 댓글 표시 영역 표시
+        document.getElementById('comment-display-' + commentId).style.display = 'block';
+    }
+
+</script>
+
 </body>
 </html>

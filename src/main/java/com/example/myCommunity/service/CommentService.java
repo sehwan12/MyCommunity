@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -37,7 +36,7 @@ public class CommentService {
                 .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
     }
 
-    private Comment getCommentById(Long commentId) {
+    public Comment getCommentById(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("댓글을 찾을 수 없습니다."));
     }
@@ -76,14 +75,14 @@ public class CommentService {
 
     //댓글 수정
     @Transactional
-    public void editComment(Long currentUserId, CommentEditDTO editDTO) {
-        Comment comment =getCommentById(editDTO.getCommentId());
+    public void editComment(Long currentUserId, String newContent, Long commentId) {
+        Comment comment =getCommentById(commentId);
         // 작성자 ID와 현재 사용자 ID를 직접 비교
         if (!comment.isAuthor(currentUserId)) {
             throw new UnauthorizedException("댓글을 수정할 권한이 없습니다.");
         }
 
-        comment.editContent(editDTO.getContent());
+        comment.editContent(newContent);
 
     }
 

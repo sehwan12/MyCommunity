@@ -26,15 +26,16 @@ public class PostService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final BoardService boardService;
+    private final CommentRepository commentRepository;
+    private final AttachmentRepository attachmentRepository;
 
     private Users getCurrentUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("사용자를 찾을 수 없습니다."));
     }
 
     public Post getCurrentPost(Long postId) {
-        Post post=postRepository.findById(postId)
+        return postRepository.findById(postId)
                 .orElseThrow(()-> new PostNotFoundException("게시글을 찾을 수 없습니다."));
-        return post;
     }
     private void validateUser(Post post, Long currentUserId) {
         if (!post.isAuthor(currentUserId)) {
@@ -69,6 +70,11 @@ public class PostService {
         Post post=getCurrentPost(postId);
         // 작성자 ID와 현재 사용자 ID를 직접 비교
         validateUser(post, currentUserId);
+        //연관된 댓글 삭제
+        commentRepository.deleteByPost(post);
+        //연관된 첨부파일 삭제
+        attachmentRepository.deleteByPost(post);
+        //게시글 삭제
         postRepository.delete(post);
     }
 

@@ -23,8 +23,6 @@ public class BoardController {
     private final BoardService boardService;
     private final PostService postService;
 
-
-
     /**
      * 개별 게시판 페이지 - 특정 게시판의 모든 글 목록을 페이지네이션하여 표시
      *
@@ -46,6 +44,6 @@ public class BoardController {
 
         model.addAttribute("board", board);
         model.addAttribute("postPage", postPage);
-        return "post/post";
+        return "board";
     }
 }

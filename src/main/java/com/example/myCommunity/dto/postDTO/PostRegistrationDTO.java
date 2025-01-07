@@ -15,9 +15,10 @@ public class PostRegistrationDTO {
     @NotBlank
     @Size(min = 1, max = 50)
     private String title;
+
     @NotBlank
     private String postText;
-    @NotNull
+
     private Long userId;
     private String boardName;
 

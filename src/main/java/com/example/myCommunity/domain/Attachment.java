@@ -25,9 +25,11 @@ public class Attachment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    private String attachUrl;
+    private String fileName;
 
-    private long attachSize;
+    private String filePath;
+
+    private Long fileSize;
 
     @Column(name = "created_date")
     @CreatedDate
@@ -37,16 +39,12 @@ public class Attachment {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-//    public void updateAttachment(String attachUrl, long attachSize) {
-//        this.attachUrl = attachUrl;
-//        this.attachSize = attachSize;
-//    }
-
     @Builder
-    public Attachment(Post post, String attachUrl, long attachSize) {
+    public Attachment(Post post, String fileName, String filePath, Long fileSize) {
         this.post = post;
-        this.attachUrl = attachUrl;
-        this.attachSize = attachSize;
+        this.fileName= fileName;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
     }
 
 }

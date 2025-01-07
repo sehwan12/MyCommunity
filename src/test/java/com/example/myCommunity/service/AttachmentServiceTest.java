@@ -124,11 +124,11 @@ class AttachmentServiceTest {
         // then
         assertNotNull(savedAttachment.getAttachmentId(), "첨부파일 ID는 null이 아니어야 합니다.");
         assertEquals(testPost.getPostId(), savedAttachment.getPost().getPostId(), "첨부파일의 게시글 ID가 일치해야 합니다.");
-        assertEquals(mockFile.getSize(), savedAttachment.getAttachSize(), "첨부파일 크기가 일치해야 합니다.");
-        assertTrue(savedAttachment.getAttachUrl().contains(".png"), "첨부파일 URL에 확장자가 포함되어야 합니다.");
+        assertEquals(mockFile.getSize(), savedAttachment.getFileSize(), "첨부파일 크기가 일치해야 합니다.");
+        assertTrue(savedAttachment.getFilePath().contains(".png"), "첨부파일 URL에 확장자가 포함되어야 합니다.");
 
         // 파일이 실제로 저장되었는지 확인
-        File savedFile = new File(savedAttachment.getAttachUrl());
+        File savedFile = new File(savedAttachment.getFilePath());
         assertTrue(savedFile.exists(), "파일이 실제로 저장되어야 합니다.");
     }
 
@@ -283,7 +283,7 @@ class AttachmentServiceTest {
         Attachment savedAttachment = attachmentService.addAttachmentToPost(testPost.getPostId(), testUser.getUserId(), mockFile);
         Long attachmentId = savedAttachment.getAttachmentId();
 
-        File savedFile = new File(savedAttachment.getAttachUrl());
+        File savedFile = new File(savedAttachment.getFilePath());
         assertTrue(savedFile.exists(), "파일이 실제로 저장되어야 합니다.");
 
         // when
@@ -313,7 +313,7 @@ class AttachmentServiceTest {
         Attachment savedAttachment = attachmentService.addAttachmentToPost(testPost.getPostId(), testUser.getUserId(), mockFile);
         Long attachmentId = savedAttachment.getAttachmentId();
 
-        File savedFile = new File(savedAttachment.getAttachUrl());
+        File savedFile = new File(savedAttachment.getFilePath());
         assertTrue(savedFile.exists(), "파일이 실제로 저장되어야 합니다.");
 
         // 다른 사용자 생성
@@ -487,8 +487,8 @@ class AttachmentServiceTest {
         Attachment attachment1 = attachmentService.addAttachmentToPost(testPost.getPostId(), testUser.getUserId(), mockFile1);
         Attachment attachment2 = attachmentService.addAttachmentToPost(testPost.getPostId(), testUser.getUserId(), mockFile2);
 
-        File file1 = new File(attachment1.getAttachUrl());
-        File file2 = new File(attachment2.getAttachUrl());
+        File file1 = new File(attachment1.getFilePath());
+        File file2 = new File(attachment2.getFilePath());
 
         assertTrue(file1.exists(), "파일1이 실제로 저장되어야 합니다.");
         assertTrue(file2.exists(), "파일2가 실제로 저장되어야 합니다.");

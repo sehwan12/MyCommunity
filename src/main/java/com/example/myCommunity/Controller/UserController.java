@@ -46,7 +46,7 @@ Get 요청시 Setter가 존재해야 한다.(기본 WebDataBinder 설정, 변경
 *
 * */
 
-//아직 미완성
+
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/users")
@@ -155,7 +155,6 @@ public class UserController {
     }
 
     //로그인 로직
-    //이후 수정
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute UserLoginDTO loginDTO,
                         BindingResult bindingResult,

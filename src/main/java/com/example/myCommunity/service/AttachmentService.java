@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -31,7 +32,6 @@ public class AttachmentService{
     /**
      * 파일 업로드 디렉토리 초기화
      */
-    //@Transactional
     public void init() {
         File dir = new File(uploadDir);
         if (!dir.exists()) {
@@ -48,9 +48,8 @@ public class AttachmentService{
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
 
-        //User currentUser = getCurrentUser();
         // 게시글 작성자만 삭제할 수 있도록 검증
-        if (!post.getUser().getUserId().equals(currentUserId)) {
+        if (!post.isAuthor(currentUserId)) {
             throw new UnauthorizedException("첨부파일을 추가할 권한이 없습니다.");
         }
 
@@ -72,11 +71,28 @@ public class AttachmentService{
         // Attachment 엔티티 생성 및 저장
         Attachment attachment = Attachment.builder()
                 .post(post)
-                .attachSize(file.getSize())
-                .attachUrl(filepath)
+                .fileName(filename)
+                .filePath(filepath)
+                .fileSize(file.getSize())
                 .build();
 
         return attachmentRepository.save(attachment);
+    }
+
+    /**
+     * 여러 첨부파일 추가
+     */
+    @Transactional
+    public void addAttachmentsToPost(Long postId, Long currentUserId, List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                addAttachmentToPost(postId, currentUserId, file);
+            }
+        }
     }
 
     /**
@@ -92,12 +108,12 @@ public class AttachmentService{
         //User currentUser = getCurrentUser();
 
         // 게시글 작성자만 삭제할 수 있도록 검증
-        if (!post.getUser().getUserId().equals(currentUserId)) {
+        if (!post.isAuthor(currentUserId)) {
             throw new UnauthorizedException("첨부파일을 삭제할 권한이 없습니다.");
         }
 
         // 파일 시스템에서 파일 삭제
-        File file = new File(attachment.getAttachUrl());
+        File file = new File(attachment.getFilePath());
         if (file.exists()) {
             boolean deleted = file.delete();
             if (!deleted) {
@@ -138,7 +154,7 @@ public class AttachmentService{
             throw new IllegalArgumentException("파일이 비어있습니다.");
         }
 
-        if (!file.getContentType().startsWith("image/")) {
+        if (!Objects.requireNonNull(file.getContentType()).startsWith("image/")) {
             throw new IllegalArgumentException("이미지 파일만 업로드할 수 있습니다.");
         }
 

@@ -22,11 +22,14 @@ public class PostEditDTO {
     @NotBlank(message = "내용은 필수입니다.")
     private String postText;
 
+    private String boardName;
+
     public static PostEditDTO fromEntity(Post post) {
         return PostEditDTO.builder().
                 postId(post.getPostId()).
                 title(post.getTitle()).
                 postText(post.getPostText()).
+                boardName(post.getBoard().getBoardName()).
                 build();
     }
 }

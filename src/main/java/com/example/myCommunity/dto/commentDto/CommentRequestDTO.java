@@ -11,9 +11,8 @@ public class CommentRequestDTO {
     @NotBlank
     private String content;
 
-    private Long parentId;
-
     private Long userId;
+    private Long parentId;
 
     private Long postId;
 
