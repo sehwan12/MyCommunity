@@ -1,3 +1,4 @@
+# MyCommunity
 
 MyCommunity는 Spring Boot, Thymeleaf, Spring Data JPA를 기반으로 한 웹 커뮤니티 애플리케이션입니다.<p> 
 사용자는 게시글 작성, 댓글 및 대댓글(최대 2단계) 작성, 파일 첨부, 하트(좋아요) 기능 등을 통해 상호 소통할 수 있으며, <p> 
@@ -31,3 +32,4 @@ MyCommunity는 Spring Boot, Thymeleaf, Spring Data JPA를 기반으로 한 웹 �
 - **데이터베이스:** H2 (개발 및 테스트용, 다른 데이터베이스로 변경 가능)
 - **빌드 도구:** Gradle
 - **기타:** Lombok, Jakarta EE, JUnit & MockMvc (테스트)
+
